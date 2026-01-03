@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log("✅ REGISTRATION SAVED TO DATABASE:", registration.id);
+    // console.log("✅ REGISTRATION SAVED TO DATABASE:", registration.id);
 
     // PAYMENT INITIATE
     const paymentRequest: PaymentRequest = {
@@ -50,7 +50,11 @@ export async function POST(request: NextRequest) {
       customer_email: email,
       customer_state: "",
       customer_postcode: "",
-      // option: "",
+      value1: "",
+      value2: "",
+      value3: "",
+      value4: "",
+      option: "",
     };
 
     const response = await shurjopay.makePayment(paymentRequest);

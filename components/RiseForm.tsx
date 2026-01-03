@@ -42,7 +42,8 @@ export default function RiseForm() {
       newErrors.fullName = "অনুগ্রহ করে আপনার নাম লিখুন";
 
     // Phone
-    if (!formData.mobileNumber.trim()) newErrors.mobileNumber = "মোবাইল নম্বর আবশ্যক";
+    if (!formData.mobileNumber.trim())
+      newErrors.mobileNumber = "মোবাইল নম্বর আবশ্যক";
     else if (!/^[0-9+\-\s()]+$/.test(formData.mobileNumber))
       newErrors.mobileNumber = "সঠিক ফোন নম্বর দিন";
 
@@ -79,52 +80,53 @@ export default function RiseForm() {
     if (Object.keys(newErrors).length === 0) {
       console.log("Form Data:", formData);
 
-      //   // Clear the form after logging the data
-      //   setFormData({
-      //     fullName: "",
-      //     mobileNumber: "",
-      //     email: "",
-      //     address: "",
-      //     enterprise: "",
-      //     sponsorName: "",
-      //     sponsorPhone: "",
-      //   });
+      // Clear the form after logging the data
+      setFormData({
+        fullName: "",
+        mobileNumber: "",
+        email: "",
+        address: "",
+        enterprise: "",
+        sponsorName: "",
+        sponsorPhone: "",
+      });
 
-      //   // Create the payload for the API call
-      //   const paymentPayload = {
-      //     fullName: formData.fullName,
-      //     mobileNumber: formData.mobileNumber,
-      //     email: formData.email,
-      //     address: formData.address,
-      //     enterprise: formData.enterprise,
-      //     sponsorName: formData.sponsorName,
-      //     sponsorPhone: formData.sponsorPhone,
-      //   };
+      // Create the payload for the API call
+      const paymentPayload = {
+        amount: 4200,
+        fullName: formData.fullName,
+        mobileNumber: formData.mobileNumber,
+        email: formData.email,
+        address: formData.address,
+        enterprise: formData.enterprise,
+        sponsorName: formData.sponsorName,
+        sponsorPhone: formData.sponsorPhone,
+      };
 
-      //   try {
-      //     // Sending the API request
-      //     const response = await fetch("/api/payment/initiate", {
-      //       method: "POST",
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //       },
-      //       body: JSON.stringify(paymentPayload), // Sending the form data as JSON
-      //     });
+      try {
+        // Sending the API request
+        const response = await fetch("/api/payment/initiate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(paymentPayload), // Sending the form data as JSON
+        });
 
-      //     const result = await response.json();
+        const result = await response.json();
 
-      //     // Handle success or failure
-      //     if (result.success && result.data) {
-      //       const paymentResponse = result.data;
-      //       window.location.href = paymentResponse.checkout_url;
-      //     } else {
-      //       setError(result.error || "Payment initiation failed");
-      //     }
-      //   } catch (err) {
-      //     setError(err instanceof Error ? err.message : "An error occurred");
-      //   } finally {
-      //     setLoading(false);
-      //   }
+        // Handle success or failure
+        if (result.success && result.data) {
+          const paymentResponse = result.data;
+          window.location.href = paymentResponse.checkout_url;
+        } else {
+          setError(result.error || "Payment initiation failed");
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
     } else {
       setErrors(newErrors); // Set form validation errors if any
       setLoading(false);
@@ -136,6 +138,9 @@ export default function RiseForm() {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
           {/* Header */}
+          {/* Header */}
+          {/* <div className="bg-gradient-to-br from-emerald-500 to-teal-600 px-8 py-8"> */}
+
           <div className="bg-[#5b9cb9] px-8 py-8">
             <div className="text-center">
               <div className="flex justify-center mb-3 sm:mb-4">
@@ -144,15 +149,15 @@ export default function RiseForm() {
                     src="/cropped-logo-tiens-baru.png"
                     alt="rise enterprise"
                     fill
-                    className="object-cover rounded-full border-3 p-1 border-white shadow-md"
+                    className="object-contain drop-shadow-lg"
                     priority
                   />
                 </div>
               </div>
-              <h2 className="text-4xl font-bold italic text-white">
+              <h2 className="text-4xl font-bold italic text-white drop-shadow-md">
                 Rise Enterprise
               </h2>
-              <p className="text-white/90 mt-2 text-lg">
+              <p className="text-white/95 mt-2 text-lg">
                 সঠিক তথ্য দিয়ে ফর্মটি পূরণ করুন
               </p>
             </div>

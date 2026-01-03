@@ -19,6 +19,11 @@ interface PaymentRequest {
   customer_postcode?: string;
   discount_amount?: number;
   disc_percent?: number;
+  value1?: string;
+  value2?: string;
+  value3?: string;
+  value4?: string;
+  option?: string;
 }
 
 interface PaymentResponse {
@@ -80,42 +85,6 @@ class ShurjoPay {
     };
   }
 
-  private async authenticate(): Promise<AuthResponse> {
-    try {
-      console.log("🔐 Authenticating with shurjoPay...");
-
-      const response = await fetch(`${this.config.endpoint}/api/get_token`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: this.config.username,
-          password: this.config.password,
-        }),
-      });
-
-      const data: AuthResponse = await response.json();
-      console.log("✅ Authentication response:", data);
-
-      if (!response.ok) {
-        throw new Error(`Authentication failed: ${JSON.stringify(data)}`);
-      }
-
-      if (!data.token || !data.store_id) {
-        throw new Error("Token or store_id not received from authentication");
-      }
-
-      this.token = data.token;
-      this.storeId = data.store_id;
-
-      return data;
-    } catch (error) {
-      console.error("❌ Authentication error:", error);
-      throw error;
-    }
-  }
-
   async makePayment(paymentRequest: PaymentRequest): Promise<PaymentResponse> {
     try {
       console.log("💳 Initiating payment...");
@@ -153,6 +122,7 @@ class ShurjoPay {
         value2: "",
         value3: "",
         value4: "",
+        option: "",
       };
 
       // console.log("📤 Payment request data:", {
@@ -194,9 +164,45 @@ class ShurjoPay {
     }
   }
 
+  private async authenticate(): Promise<AuthResponse> {
+    try {
+      console.log("🔐 Authenticating with shurjoPay...");
+
+      const response = await fetch(`${this.config.endpoint}/api/get_token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: this.config.username,
+          password: this.config.password,
+        }),
+      });
+
+      const data: AuthResponse = await response.json();
+      console.log("✅ Authentication response:", data);
+
+      if (!response.ok) {
+        throw new Error(`Authentication failed: ${JSON.stringify(data)}`);
+      }
+
+      if (!data.token || !data.store_id) {
+        throw new Error("Token or store_id not received from authentication");
+      }
+
+      this.token = data.token;
+      this.storeId = data.store_id;
+
+      return data;
+    } catch (error) {
+      console.error("❌ Authentication error:", error);
+      throw error;
+    }
+  }
+
   async verifyPayment(orderId: string): Promise<VerifyPaymentResponse> {
     try {
-      // console.log("🔍 Verifying payment for order:", orderId);
+      console.log("🔍 Verifying payment for order:", orderId);
 
       // Get authentication token
       const authData = await this.authenticate();

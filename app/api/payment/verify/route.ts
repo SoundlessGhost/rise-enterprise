@@ -1,14 +1,14 @@
 // app/api/payment/verify/route.ts
 
-import { Resend } from "resend";
+// import { Resend } from "resend";
 import { shurjopay } from "@/lib/shurjopay";
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { sendSMS, generateRegistrationSMS } from "@/lib/sms-service";
-import { generateAdminEmail, generateUserEmail } from "@/lib/email-template";
+// import { sendSMS, generateRegistrationSMS } from "@/lib/sms-service";
+// import { generateAdminEmail, generateUserEmail } from "@/lib/email-template";
 
 const prisma = new PrismaClient();
-const resend = new Resend(process.env.RESEND_API_KEY);
+// const resend = new Resend(process.env.RESEND_API_KEY);
 
 interface ShurjoPayVerifyResponse {
   bank_status?: string;
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ✅ DATABASE থেকে REGISTRATION INFO FETCH
+    // ✅ FROM DATABASE REGISTRATION INFO FETCH
     let registration = await prisma.registration.findUnique({
       where: { id: order_id },
     });
@@ -77,8 +77,9 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // ✅ SHURJOPAY থেকে PAYMENT VERIFY
-    console.log("🔐 Verifying payment with ShurjoPay...");
+    // ✅ FROM SHURJOPAY PAYMENT VERIFY
+    console.log("🔐 VERIFYING PAYMENT WITH SHURJOPAY...");
+
     const response = (await shurjopay.verifyPayment(
       order_id
     )) as unknown as ShurjoPayVerifyResponse;
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
     console.log("✅ SHURJOPAY VERIFY RESPONSE:", response);
 
     const success = isPaymentSuccess(response);
-    console.log("💳 Payment Success Status:", success);
+    console.log("💳 PAYMENT SUCCESS STATUS:", success);
 
     const updateRegistration = async (data: {
       paymentStatus: "SUCCESS" | "FAILED";
@@ -116,7 +117,7 @@ export async function POST(request: NextRequest) {
         ? String(response.order_id)
         : order_id;
 
-      console.log("💾 Updating database with SUCCESS status...");
+      console.log("💾 UPDATING DATABASE WITH SUCCESS STATUS...");
 
       // DATABASE UPDATE
       const count = await updateRegistration({
@@ -132,66 +133,66 @@ export async function POST(request: NextRequest) {
       }
 
       // ✅ এখন SMS + EMAIL পাঠান
-      console.log("📧 Starting notifications (SMS + Email)...");
+      // console.log("📧 STARTING NOTIFICATIONS (SMS + EMAIL)...");
 
-      // 1️⃣ SMS পাঠান
-      try {
-        console.log("📱 Preparing SMS message...");
-        const smsMessage = generateRegistrationSMS(
-          registration.fullName,
-          registration.amount,
-          order_id
-        );
+      // // 1️⃣ SMS পাঠান
+      // try {
+      //   console.log("📱 PREPARING SMS MESSAGE...");
+      //   const smsMessage = generateRegistrationSMS(
+      //     registration.fullName,
+      //     registration.amount,
+      //     order_id
+      //   );
 
-        console.log("📤 Calling sendSMS function...");
-        const smsResult = await sendSMS(registration.mobileNumber, smsMessage);
+      //   console.log("📤 CALLING SEND SMS FUNCTION...");
+      //   const smsResult = await sendSMS(registration.mobileNumber, smsMessage);
 
-        if (smsResult.success) {
-          console.log(
-            "✅ SMS SENT SUCCESSFULLY TO:",
-            registration.mobileNumber
-          );
-          console.log("📱 SMS Message ID:", smsResult.messageId);
-        } else {
-          console.error("❌ SMS FAILED:", smsResult.error);
-        }
-      } catch (smsError) {
-        console.error("❌ SMS EXCEPTION:", smsError);
-      }
+      //   if (smsResult.success) {
+      //     console.log(
+      //       "✅ SMS SENT SUCCESSFULLY TO:",
+      //       registration.mobileNumber
+      //     );
+      //     console.log("📱 SMS MESSAGE ID:", smsResult.messageId);
+      //   } else {
+      //     console.error("❌ SMS FAILED:", smsResult.error);
+      //   }
+      // } catch (smsError) {
+      //   console.error("❌ SMS EXCEPTION:", smsError);
+      // }
 
-      // 2️⃣ ADMIN EMAIL
-      try {
-        if (process.env.ADMIN_EMAIL) {
-          console.log("📧 Sending admin email...");
-          await resend.emails.send({
-            from: "Nadi Yatra <noreply@send.dekhai.org>",
-            to: process.env.ADMIN_EMAIL,
-            subject: `✅ NEW REGISTRATION - ${registration.fullName}`,
-            html: generateAdminEmail(response, registration),
-          });
-          console.log("✅ ADMIN EMAIL SENT");
-        }
-      } catch (emailError) {
-        console.error("❌ ADMIN EMAIL ERROR:", emailError);
-      }
+      // // 2️⃣ ADMIN EMAIL
+      // try {
+      //   if (process.env.ADMIN_EMAIL) {
+      //     console.log("📧 SENDING ADMIN EMAIL...");
+      //     await resend.emails.send({
+      //       from: "Nadi Yatra <noreply@send.dekhai.org>",
+      //       to: process.env.ADMIN_EMAIL,
+      //       subject: `✅ NEW REGISTRATION - ${registration.fullName}`,
+      //       html: generateAdminEmail(response, registration),
+      //     });
+      //     console.log("✅ ADMIN EMAIL SENT");
+      //   }
+      // } catch (emailError) {
+      //   console.error("❌ ADMIN EMAIL ERROR:", emailError);
+      // }
 
-      // 3️⃣ USER EMAIL
-      try {
-        if (registration.email) {
-          console.log("📧 Sending user email to:", registration.email);
-          await resend.emails.send({
-            from: "Nadi Yatra <noreply@send.dekhai.org>",
-            to: registration.email,
-            subject: `✅ নদী যাত্রা ২০২৬ - আপনার রেজিস্ট্রেশন সফল হয়েছে`,
-            html: generateUserEmail(response, registration),
-          });
-          console.log("✅ USER EMAIL SENT TO:", registration.email);
-        }
-      } catch (emailError) {
-        console.error("❌ USER EMAIL ERROR:", emailError);
-      }
+      // // 3️⃣ USER EMAIL
+      // try {
+      //   if (registration.email) {
+      //     console.log("📧 SENDING USER EMAIL TO:", registration.email);
+      //     await resend.emails.send({
+      //       from: "Nadi Yatra <noreply@send.dekhai.org>",
+      //       to: registration.email,
+      //       subject: `✅ নদী যাত্রা ২০২৬ - আপনার রেজিস্ট্রেশন সফল হয়েছে`,
+      //       html: generateUserEmail(response, registration),
+      //     });
+      //     console.log("✅ USER EMAIL SENT TO:", registration.email);
+      //   }
+      // } catch (emailError) {
+      //   console.error("❌ USER EMAIL ERROR:", emailError);
+      // }
 
-      console.log("📧 All notifications processed");
+      // console.log("📧 All notifications processed");
 
       return NextResponse.json({
         success: true,
@@ -200,7 +201,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ❌ PAYMENT FAILED হলে
-    console.log("❌ Payment verification failed");
+    console.log("❌ PAYMENT VERIFICATION FAILED");
     const count = await updateRegistration({
       paymentStatus: "FAILED",
       updatedAt: new Date(),
@@ -223,7 +224,7 @@ export async function POST(request: NextRequest) {
       error instanceof Error ? error.stack : "No stack"
     );
 
-    // Database update করার চেষ্টা করুন (FAILED হিসেবে)
+    // TRY TO UPDATE DATABASE (AS FAILED)
     try {
       if (order_id) {
         const updated = await prisma.registration.updateMany({
