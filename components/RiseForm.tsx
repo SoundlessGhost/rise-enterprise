@@ -137,16 +137,29 @@ export default function RiseForm() {
     <div className="min-h-screen bg-linear-to-br from-[#f3f8fb] to-[#d8eaf2] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-          {/* Header */}
-          {/* Header */}
           {/* <div className="bg-gradient-to-br from-emerald-500 to-teal-600 px-8 py-8"> */}
+          {/* Header */}
+          <div className="bg-white border-b-4 border-[#5b9cb9] px-8 py-8 relative">
+            {/* Logo */}
+            <div className="absolute top-4 left-4">
+              <div className="relative h-12 w-12 sm:h-12 sm:w-12">
+                <Image
+                  src="/cropped-logo-tiens-baru.png"
+                  alt="rise enterprise"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </div>
 
-          <div className="bg-[#5b9cb9] px-8 py-8">
+            {/* Title */}
             <div className="text-center">
-              <div className="flex justify-center mb-3 sm:mb-4">
-                <div className="relative h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24">
+              {/* Logo - Center Top (above title) */}
+              <div className="flex justify-center">
+                <div className="relative h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28">
                   <Image
-                    src="/cropped-logo-tiens-baru.png"
+                    src="/eth.png"
                     alt="rise enterprise"
                     fill
                     className="object-contain drop-shadow-lg"
@@ -154,10 +167,10 @@ export default function RiseForm() {
                   />
                 </div>
               </div>
-              <h2 className="text-4xl font-bold italic text-white drop-shadow-md">
+              <h2 className="text-5xl font-bold text-[#5b9cb9] mb-2">
                 Rise Enterprise
               </h2>
-              <p className="text-white/95 mt-2 text-lg">
+              <p className="text-gray-600 text-sm">
                 সঠিক তথ্য দিয়ে ফর্মটি পূরণ করুন
               </p>
             </div>
